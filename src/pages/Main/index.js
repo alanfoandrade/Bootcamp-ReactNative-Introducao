@@ -18,8 +18,8 @@ import {
   Avatar,
   Name,
   Bio,
-  ProfileButton,
-  ProfileButtonText,
+  FavButton,
+  FavButtonText,
 } from './styles';
 
 export default class Main extends Component {
@@ -111,9 +111,9 @@ export default class Main extends Component {
               <Name>{item.name}</Name>
               <Bio>{item.bio}</Bio>
 
-              <ProfileButton onPress={() => this.handleNavigate(item)}>
-                <ProfileButtonText>Ver perfil</ProfileButtonText>
-              </ProfileButton>
+              <FavButton onPress={() => this.handleNavigate(item)}>
+                <FavButtonText>Ver favoritos</FavButtonText>
+              </FavButton>
             </User>
           )}
         />

@@ -71,7 +71,7 @@ export const Bio = styled.Text.attrs({
   text-align: center;
 `;
 
-export const ProfileButton = styled(RectButton)`
+export const FavButton = styled(RectButton)`
   margin-top: 10px;
   align-self: stretch;
   border-radius: 4px;
@@ -81,7 +81,7 @@ export const ProfileButton = styled(RectButton)`
   height: 36px;
 `;
 
-export const ProfileButtonText = styled.Text`
+export const FavButtonText = styled.Text`
   font-size: 14px;
   font-weight: bold;
   color: #fff;
