@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
-import { GitView } from './styles';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { Container, GitView } from './styles';
 
 export default class Repository extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -10,23 +11,38 @@ export default class Repository extends Component {
 
   state = {
     repository: '',
+    loading: true,
   };
 
   componentDidMount() {
-    this.load();
-  }
-
-  load = () => {
     const { navigation } = this.props;
 
     const repository = navigation.getParam('user');
 
     this.setState({ repository });
-  };
+  }
+
+  handleLoading(loading) {
+    this.setState({ loading });
+  }
 
   render() {
-    const { repository } = this.state;
-    return <GitView source={{ uri: repository.html_url }} />;
+    const { repository, loading } = this.state;
+
+    return (
+      <Container>
+        <Spinner
+          visible={loading}
+          textContent="Loading..."
+          textStyle={{ color: '#7159c1' }}
+        />
+        <GitView
+          source={{ uri: repository.html_url }}
+          onLoadStart={() => this.handleLoading(true)}
+          onLoad={() => this.handleLoading(false)}
+        />
+      </Container>
+    );
   }
 }
 
