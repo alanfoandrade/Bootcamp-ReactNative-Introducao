@@ -2,7 +2,19 @@ import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { Container, GitView } from './styles';
+import {
+  Container,
+  GitView,
+  GitNav,
+  GoBackButton,
+  GoBackButtonText,
+  RefreshButton,
+  RefreshButtonText,
+  StopLoadButton,
+  StopLoadButtonText,
+  GoForwardButton,
+  GoForwardButtonText,
+} from './styles';
 
 export default class Repository extends Component {
   static navigationOptions = ({ navigation }) => ({
@@ -12,9 +24,46 @@ export default class Repository extends Component {
   state = {
     repository: '',
     loading: true,
+    canGoBack: false,
+    canGoForward: false,
   };
 
   componentDidMount() {
+    this.load();
+  }
+
+  onNavigationStateChange = navState => {
+    console.tron.log(navState);
+    console.tron.log(navState.canGoBack);
+
+    this.setState({
+      loading: navState.loading,
+      canGoBack: navState.canGoBack,
+      canGoForward: navState.canGoForward,
+    });
+  };
+
+  onBack = () => {
+    const { canGoBack } = this.state;
+
+    if (canGoBack) this.webView.goBack();
+  };
+
+  onForward = () => {
+    const { canGoForward } = this.state;
+
+    if (canGoForward) this.webView.goForward();
+  };
+
+  onReload = () => {
+    this.webView.reload();
+  };
+
+  onStop = () => {
+    this.webView.stopLoading();
+  };
+
+  load() {
     const { navigation } = this.props;
 
     const repository = navigation.getParam('user');
@@ -22,12 +71,8 @@ export default class Repository extends Component {
     this.setState({ repository });
   }
 
-  handleLoading(loading) {
-    this.setState({ loading });
-  }
-
   render() {
-    const { repository, loading } = this.state;
+    const { repository, loading, canGoBack, canGoForward } = this.state;
 
     return (
       <Container>
@@ -37,10 +82,27 @@ export default class Repository extends Component {
           textStyle={{ color: '#7159c1' }}
         />
         <GitView
+          ref={webView => (this.webView = webView)}
           source={{ uri: repository.html_url }}
-          onLoadStart={() => this.handleLoading(true)}
-          onLoad={() => this.handleLoading(false)}
+          onNavigationStateChange={this.onNavigationStateChange}
         />
+        <GitNav>
+          <GoBackButton disabled={!canGoBack} onPress={this.onBack}>
+            <GoBackButtonText>Back</GoBackButtonText>
+          </GoBackButton>
+
+          <RefreshButton disabled={!canGoBack} onPress={this.onReload}>
+            <RefreshButtonText>Refresh</RefreshButtonText>
+          </RefreshButton>
+
+          <StopLoadButton onPress={this.onStop}>
+            <StopLoadButtonText>Stop</StopLoadButtonText>
+          </StopLoadButton>
+
+          <GoForwardButton disabled={!canGoForward} onPress={this.onForward}>
+            <GoForwardButtonText>Forward</GoForwardButtonText>
+          </GoForwardButton>
+        </GitNav>
       </Container>
     );
   }
